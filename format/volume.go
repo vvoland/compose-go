@@ -84,13 +84,17 @@ func populateFieldFromBuffer(char rune, buffer []rune, volume *types.ServiceVolu
 		return errors.New("too many colons")
 	}
 	for _, option := range strings.Split(strBuffer, ",") {
-		switch option {
+		key, _, _ := strings.Cut(option, "=")
+
+		switch key {
 		case "ro":
 			volume.ReadOnly = true
 		case "rw":
 			volume.ReadOnly = false
 		case "nocopy":
 			volume.Volume = &types.ServiceVolumeVolume{NoCopy: true}
+		case "subpath":
+			return errors.New("subpath option is not supported in the short syntax, use the long syntax instead")
 		default:
 			if isBindOption(option) {
 				setBindOption(volume, option)
